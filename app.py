@@ -3,11 +3,11 @@ from flask import Flask, request, abort, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
-# from models import Exercise, Workout, WorkoutExercise
-
+from models import setup_db, Exercise, Workout, WorkoutExercise
 
 db = SQLAlchemy()
 migrate = Migrate()
+
 
 def create_app(test_config=None):
     """
@@ -15,6 +15,7 @@ def create_app(test_config=None):
     """
     app = Flask(__name__)
     CORS(app)
+    setup_db(app)
 
     @app.route('/')
     def home_page():
@@ -46,9 +47,6 @@ def create_app(test_config=None):
     #     return jsonify({
     #         'success': True
     #     })
-
-    db.init_app(app)
-    migrate.init_app(app, db)
 
     return app
 
