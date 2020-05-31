@@ -19,7 +19,7 @@ def setup_db(app, database_path=database_path):
 class Workout(db.Model):
     __tablename__ = 'Workouts'
 
-    id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
+    id = Column(Integer(), primary_key=True)
     date = Column(Date(), nullable=False)
     category = Column(String(), nullable=False)
     subcategory = Column(String())

@@ -13,6 +13,10 @@ def create_app(test_config=None):
     app = Flask(__name__)
     CORS(app)
 
+    @app.route('/')
+    def check_health():
+        return 'App running...'
+
     return app
 
 
