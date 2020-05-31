@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -14,12 +14,8 @@ def create_app(test_config=None):
     CORS(app)
 
     @app.route('/')
-    def check_health():
-        excited = os.environ['EXCITED']
-        greeting = 'App running'
-        if excited:
-            greeting += '!!!'
-        return greeting
+    def home_page():
+        return render_template('home.html')
 
     return app
 
