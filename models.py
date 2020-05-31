@@ -40,6 +40,10 @@ class Workout(db.Model):
             'created': self.created
         }
 
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
 
 class Exercise(db.Model):
     __tablename__ = 'Exercises'
@@ -50,11 +54,11 @@ class Exercise(db.Model):
     target = Column(String(), nullable=False)  # reps or time
     link = Column(String(), nullable=True)  # link to exercise video/explanation
     # double_weight = Column(Boolean(), nullable=False)  # double the weight in total volume calculation (using two dbs)
-    # add_bodyweight = Column(Boolean(), nullable=False)  # add bodyweight to total volume calcluation
+    # add_bodyweight = Column(Boolean(), nullable=False)  # add bodyweight to total volume calculation
 
     def __init__(self, name, equipment, target, link):
         self.name = name
-        self.equipement = equipment
+        self.equipment = equipment
         self.target = target
         self.link = link
 
@@ -67,6 +71,10 @@ class Exercise(db.Model):
             'link': self.link
         }
 
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
 
 class WorkoutExercise(db.Model):
     __tablename__ = 'WorkoutExercises'
@@ -77,6 +85,27 @@ class WorkoutExercise(db.Model):
     sets = Column(Integer(), nullable=False)
     reps = Column(Integer(), nullable=False)
     weight = Column(Numeric(precision=1), nullable=False)
+
+    def __init__(self, workout_id, exercise_id, sets, reps, weight):
+        self.workout_id = workout_id
+        self.exercise_id = exercise_id
+        self.sets = sets
+        self.reps = reps
+        self.weight = weight
+
+    def format(self):
+        return {
+            'id': self.id,
+            'workout_id': self.workout_id,
+            'exercise_id': self.exercise_id,
+            'sets': self.sets,
+            'reps': self.reps,
+            'weight': self.weight
+        }
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
 
 
 # Will possibly expand to this in the future, but not yet
