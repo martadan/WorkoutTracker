@@ -20,9 +20,9 @@ class Workout(db.Model):
     __tablename__ = 'Workouts'
 
     id = Column(Integer(), primary_key=True, nullable=False)
-    name = Column(String(), nullable=False, unique=True),
-    focus = Column(String(), nullable=True),
-    repeat = Column(Boolean(), nullable=False),
+    name = Column(String(), nullable=False, unique=True)
+    focus = Column(String(), nullable=True)
+    repeat = Column(Boolean(), nullable=False)
     created = Column(DateTime(), nullable=False)
 
     def __init__(self, name, focus, repeat, created):
