@@ -44,6 +44,16 @@ class Workout(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def __repr__(self):
+        return json.dumps(self.format())
+
 
 class Exercise(db.Model):
     __tablename__ = 'Exercises'
@@ -74,6 +84,16 @@ class Exercise(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def __repr__(self):
+        return json.dumps(self.format())
 
 
 class WorkoutExercise(db.Model):
@@ -106,6 +126,16 @@ class WorkoutExercise(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def __repr__(self):
+        return json.dumps(self.format())
 
 
 # Will possibly expand to this in the future, but not yet
