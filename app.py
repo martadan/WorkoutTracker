@@ -15,7 +15,11 @@ def create_app(test_config=None):
 
     @app.route('/')
     def check_health():
-        return 'App running...'
+        excited = os.environ['EXCITED']
+        greeting = 'App running'
+        if excited:
+            greeting += '!!!'
+        return greeting
 
     return app
 
