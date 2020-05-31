@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import Column, String, Integer, DateTime, Boolean, Date, Time, create_engine
+from sqlalchemy import Column, String, Integer, Numeric, DateTime, Boolean, Date, Time, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 
@@ -66,6 +66,17 @@ class Exercise(db.Model):
             'target': self.target,
             'link': self.link
         }
+
+
+class WorkoutExercise(db.Model):
+    __tablename__ = 'WorkoutExercises'
+
+    id = Column(Integer(), primary_key=True, nullable=False)
+    workout_id = Column(Integer())
+    exercise_id = Column(Integer())
+    sets = Column(Integer(), nullable=False)
+    reps = Column(Integer(), nullable=False)
+    weight = Column(Numeric(precision=1), nullable=False)
 
 
 # Will possibly expand to this in the future, but not yet
