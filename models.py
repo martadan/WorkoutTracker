@@ -26,7 +26,7 @@ class Workout(db.Model):
     focus = Column(String(), nullable=True)
     repeat = Column(Boolean(), nullable=False)
     created = Column(DateTime(), nullable=False)
-    exercises = relationship('WorkoutExercise', backref='Workouts')
+    exercises = relationship('WorkoutExercise', backref='workouts')
 
     def __init__(self, name, focus, repeat):
         self.name = name
@@ -82,7 +82,8 @@ class Exercise(db.Model):
             'name': self.name,
             'equipment': self.equipment,
             'target': self.target,
-            'link': self.link
+            'link': self.link,
+            'in_workouts': [m.workouts.name for m in self.workout_exercises]
         }
 
     def insert(self):
@@ -105,10 +106,11 @@ class WorkoutExercise(db.Model):
 
     id = Column(Integer(), primary_key=True, nullable=False)
     workout_id = Column(Integer(), ForeignKey('Workouts.id'))
-    exercise_id = Column(Integer())
+    exercise_id = Column(Integer(), ForeignKey('Exercises.id'))
     sets = Column(Integer(), nullable=False)
     reps = Column(Integer(), nullable=False)
     weight = Column(Numeric(precision=3, scale=1), nullable=False)
+    exercise = relationship('Exercise', backref='workout_exercises')
 
     def __init__(self, workout_id, exercise_id, sets, reps, weight):
         self.workout_id = workout_id
@@ -122,6 +124,9 @@ class WorkoutExercise(db.Model):
             'id': self.id,
             'workout_id': self.workout_id,
             'exercise_id': self.exercise_id,
+            'name': self.exercise.name,
+            'equipment': self.exercise.equipment,
+            'link': self.exercise.link,
             'sets': self.sets,
             'reps': self.reps,
             'weight': str(self.weight)  # Decimal() is not json serializable apparently...
