@@ -17,7 +17,7 @@ def create_app(test_config=None):
     CORS(app)
     setup_db(app)
 
-    @app.route('/')
+    @app.route('/', methods=['GET'])
     def home_page():
         return render_template('home.html')
 
@@ -78,9 +78,35 @@ def create_app(test_config=None):
             'success': True
         })
 
-    # @app.route('/exercises', methods=['POST'])
-    # def create_exercise():
-    #     pass
+    @app.route('/exercises', methods=['POST'])
+    def create_exercise():
+        try:
+            all_data = request.get_json()
+            name = all_data['name']
+            equipment = all_data['equipment']
+            target = all_data['target']
+            link = all_data['link']
+
+            for value in [name, equipment, target, link]:
+                if value is None:
+                    abort(400)
+
+            exercise = Exercise(
+                name=name,
+                equipment=equipment,
+                target=target,
+                link=link
+            )
+
+            # could check whether we expect this to fail based on inputs, and abort(500) otherwise
+            exercise.insert()
+        except:
+            abort(400)
+
+        return jsonify({
+            'success': True,
+            'id': exercise.id
+        })
 
     @app.route('/exercises/<int:exercise_id>', methods=['GET'])
     def get_exercise(exercise_id):
