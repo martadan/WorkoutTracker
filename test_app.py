@@ -80,7 +80,7 @@ class WorkoutTestCase(unittest.TestCase):
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['name'], 'test workout')
+        self.assertEqual(data['workout']['name'], 'test workout')
 
     def test_get_workout_404(self):
         response = self.client().get('/workouts/11')

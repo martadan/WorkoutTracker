@@ -39,11 +39,25 @@ def create_app(test_config=None):
             'success': True
         })
 
+    # probably actually don't need this one - can't think of why I'd need to query the mappings themselves
     @app.route('/mappings')
     def get_mappings():
         mappings = WorkoutExercise.query.all()
         formatted_mappings = [m.format() for m in mappings]
         return jsonify(formatted_mappings)
+
+    @app.route('/workouts/<int:workout_id>')
+    def get_workout(workout_id):
+        workout = Workout.query.get(workout_id)
+        if workout is not None:
+            return jsonify({
+                'success': True,
+                'workout': workout.format()
+            })
+        else:
+            return jsonify({
+                'success': False
+            }), 404
 
     return app
 
