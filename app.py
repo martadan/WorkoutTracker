@@ -27,6 +27,18 @@ def create_app(test_config=None):
         formatted_exercises = [e.format() for e in exercises]
         return jsonify(formatted_exercises)
 
+    @app.route('/workouts')
+    def get_workouts():
+        workouts = Workout.query.all()
+        formatted_workouts = [w.format() for w in workouts]
+        return jsonify(formatted_workouts)
+
+    @app.route('/mappings')
+    def get_mappings():
+        mappings = WorkoutExercise.query.all()
+        formatted_mappings = [m.format() for m in mappings]
+        return jsonify(formatted_mappings)
+
     @app.route('/test/create_exercises')
     def test_create_exercises():
         ex1 = Exercise(
@@ -48,6 +60,41 @@ def create_app(test_config=None):
             'success': True
         })
 
+    @app.route('/test/create_workout')
+    def test_create_workout():
+        w = Workout(
+            name='test workout',
+            focus='legs',
+            repeat=False
+        )
+        w.insert()
+
+        w_returned = Workout.query.filter(Workout.name == 'test workout').first()
+
+        return jsonify({
+            'success': True,
+            'id': w_returned.id
+        })
+
+    @app.route('/test/create_mapping')
+    def test_create_mapping():
+        w = Workout.query.first()
+        e = Exercise.query.first()
+
+        m = WorkoutExercise(
+            workout_id=w.id,
+            exercise_id=e.id,
+            sets=3,
+            reps=8,
+            weight=4
+        )
+
+        m.insert()
+
+        return jsonify({
+            'success': True
+        })
+
     @app.route('/test/delete_exercises')
     def test_delete_exercises():
         exercises = Exercise.query.all()
@@ -56,6 +103,31 @@ def create_app(test_config=None):
         return jsonify({
             'success': True
         })
+
+    @app.route('/test/delete_workouts')
+    def test_delete_workouts():
+        workouts = Workout.query.all()
+        for w in workouts:
+            w.delete()
+        return jsonify({
+            'success': True
+        })
+
+    @app.route('/test/delete_mapping')
+    def test_delete_mapping():
+        maps = WorkoutExercise.query.all()
+        for m in maps:
+            m.delete()
+        return jsonify({
+            'success': True
+        })
+
+    @app.route('/test/delete_all')
+    def delete_all():
+        test_delete_mapping()
+        test_delete_exercises()
+        test_delete_workouts()
+        return jsonify({'success': True})
 
     return app
 

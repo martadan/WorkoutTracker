@@ -1,7 +1,9 @@
 import os
-from sqlalchemy import Column, String, Integer, Numeric, DateTime, Boolean, Date, Time, create_engine
-from flask_sqlalchemy import SQLAlchemy
 import json
+import datetime as dt
+from sqlalchemy import Column, ForeignKey, String, Integer, Numeric, DateTime, Boolean, Date, Time, create_engine
+from sqlalchemy.orm import relationship
+from flask_sqlalchemy import SQLAlchemy
 
 database_path = os.environ['DATABASE_URL']
 
@@ -24,12 +26,13 @@ class Workout(db.Model):
     focus = Column(String(), nullable=True)
     repeat = Column(Boolean(), nullable=False)
     created = Column(DateTime(), nullable=False)
+    exercises = relationship('WorkoutExercise', backref='Workouts')
 
-    def __init__(self, name, focus, repeat, created):
+    def __init__(self, name, focus, repeat):
         self.name = name
         self.focus = focus
         self.repeat = repeat
-        self.created = created
+        self.created = dt.datetime.now()
 
     def format(self):
         return {
@@ -37,7 +40,8 @@ class Workout(db.Model):
             'name': self.name,
             'focus': self.focus,
             'repeat': self.repeat,
-            'created': self.created
+            'created': self.created,
+            'exercises': [e.format() for e in self.exercises]
         }
 
     def insert(self):
@@ -100,11 +104,11 @@ class WorkoutExercise(db.Model):
     __tablename__ = 'WorkoutExercises'
 
     id = Column(Integer(), primary_key=True, nullable=False)
-    workout_id = Column(Integer())
+    workout_id = Column(Integer(), ForeignKey('Workouts.id'))
     exercise_id = Column(Integer())
     sets = Column(Integer(), nullable=False)
     reps = Column(Integer(), nullable=False)
-    weight = Column(Numeric(precision=1), nullable=False)
+    weight = Column(Numeric(precision=3, scale=1), nullable=False)
 
     def __init__(self, workout_id, exercise_id, sets, reps, weight):
         self.workout_id = workout_id
@@ -120,7 +124,7 @@ class WorkoutExercise(db.Model):
             'exercise_id': self.exercise_id,
             'sets': self.sets,
             'reps': self.reps,
-            'weight': self.weight
+            'weight': str(self.weight)  # Decimal() is not json serializable apparently...
         }
 
     def insert(self):
