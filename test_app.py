@@ -102,7 +102,11 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
 
     def test_create_workout(self):
-        workout = Workout(name='new workout', focus='upper', repeat=False)
+        workout = Workout(
+            name='new workout',
+            focus='upper',
+            repeat=False
+        )
         response = self.client().post(
             '/workouts',
             data=workout.format_short(),
@@ -118,7 +122,11 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(matching_workouts, 1)
 
     def test_create_workout_duplicate(self):
-        workout = Workout(name='test workout', focus='upper', repeat=False)
+        workout = Workout(
+            name='test workout',
+            focus='upper',
+            repeat=False
+        )
         response = self.client().post(
             '/workouts',
             data=workout.format_short(),
@@ -130,10 +138,69 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
 
     def test_create_workout_malformed(self):
-        workout = Workout(name='new workout', focus=False, repeat='wrong data type')
+        workout = Workout(
+            name='new workout',
+            focus=False,
+            repeat='wrong data type'
+        )
         response = self.client().post(
             '/workouts',
             data=workout.format_short(),
+            content_type='application/json'
+        )
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(data['success'], False)
+
+    def test_create_exercise(self):
+        exercise = Exercise(
+            name='bodyweight squat',
+            equipment='bodyweight',
+            target='reps',
+            link='another link...'
+        )
+        response = self.client().post(
+            '/exercises',
+            data=exercise.format_short(),
+            content_type='application/json'
+        )
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_exercises = Exercise.query.filter(Exercise.name == exercise.name).count()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(matching_exercises, 1)
+
+    def test_create_exercise_duplicate(self):
+        exercise = Exercise(
+            name='kb goblet squat',
+            equipment='kettlebell',
+            target='reps',
+            link='another link...'
+        )
+        response = self.client().post(
+            '/exercises',
+            data=exercise.format_short(),
+            content_type='application/json'
+        )
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(data['success'], False)
+
+    def test_create_exercise_malformed(self):
+        exercise = Exercise(
+            name='wrong data types',
+            equipment=None,
+            target=42,
+            link=False
+        )
+        response = self.client().post(
+            '/exercises',
+            data=exercise.format_short(),
             content_type='application/json'
         )
         data = json.loads(response.data)

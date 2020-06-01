@@ -85,6 +85,14 @@ class Exercise(db.Model):
             'in_workouts': [m.workouts.name for m in self.workout_exercises]
         }
 
+    def format_short(self):
+        return json.dumps({
+            'name': self.name,
+            'equipment': self.equipment,
+            'target': self.target,
+            'link': self.link
+        })
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
