@@ -25,7 +25,10 @@ def create_app(test_config=None):
     def get_exercises():
         exercises = Exercise.query.all()
         formatted_exercises = [e.format() for e in exercises]
-        return jsonify(formatted_exercises)
+        return jsonify({
+            'exercises': formatted_exercises,
+            'success': True
+        })
 
     @app.route('/workouts')
     def get_workouts():
