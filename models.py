@@ -36,6 +36,13 @@ class Workout(db.Model):
             'exercises': [e.format() for e in self.exercises]
         }
 
+    def format_short(self):
+        return json.dumps({
+            'name': self.name,
+            'focus': self.focus,
+            'repeat': self.repeat
+        })
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
