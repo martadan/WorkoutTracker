@@ -21,15 +21,6 @@ def create_app(test_config=None):
     def home_page():
         return render_template('home.html')
 
-    @app.route('/exercises', methods=['GET'])
-    def get_exercises():
-        exercises = Exercise.query.all()
-        formatted_exercises = [e.format() for e in exercises]
-        return jsonify({
-            'exercises': formatted_exercises,
-            'success': True
-        })
-
     @app.route('/workouts', methods=['GET'])
     def get_workouts():
         workouts = Workout.query.all()
@@ -39,25 +30,35 @@ def create_app(test_config=None):
             'success': True
         })
 
-    # probably actually don't need this one - can't think of why I'd need to query the mappings themselves
-    @app.route('/mappings', methods=['GET'])
-    def get_mappings():
-        mappings = WorkoutExercise.query.all()
-        formatted_mappings = [m.format() for m in mappings]
-        return jsonify(formatted_mappings)
-
-    @app.route('/exercises/<int:exercise_id>', methods=['GET'])
-    def get_exercise(exercise_id):
-        exercise = Exercise.query.get(exercise_id)
-        if exercise is not None:
-            return jsonify({
-                'success': True,
-                'exercise': exercise.format()
-            })
-        else:
-            return jsonify({
-                'success': False
-            }), 404
+    # @app.route('/workouts', methods=['POST'])
+    # def create_workout():
+    #     try:
+    #         all_data = request.get_json()
+    #         name = all_data['name']
+    #         focus = all_data['focus']
+    #         repeat = all_data['repeat']
+    #
+    #         for value in [name, focus, repeat]:
+    #             if value is None:
+    #                 abort(400)
+    #
+    #         workout = Workout(
+    #             name=name,
+    #             focus=focus,
+    #             repeat=repeat
+    #         )
+    #     except:
+    #         abort(400)
+    #
+    #     try:
+    #         workout.insert()
+    #     except:
+    #         abort(500)
+    #
+    #     return jsonify({
+    #         'success': True,
+    #         'id': workout.id
+    #     })
 
     @app.route('/workouts/<int:workout_id>', methods=['GET'])
     def get_workout(workout_id):
@@ -68,9 +69,71 @@ def create_app(test_config=None):
                 'workout': workout.format()
             })
         else:
+            abort(404)
+
+    @app.route('/exercises', methods=['GET'])
+    def get_exercises():
+        exercises = Exercise.query.all()
+        formatted_exercises = [e.format() for e in exercises]
+        return jsonify({
+            'exercises': formatted_exercises,
+            'success': True
+        })
+
+    # @app.route('/exercises', methods=['POST'])
+    # def create_exercise():
+    #     pass
+
+    @app.route('/exercises/<int:exercise_id>', methods=['GET'])
+    def get_exercise(exercise_id):
+        exercise = Exercise.query.get(exercise_id)
+        if exercise is not None:
             return jsonify({
-                'success': False
-            }), 404
+                'success': True,
+                'exercise': exercise.format()
+            })
+        else:
+            abort(404)
+
+    # probably actually don't need this one - can't think of why I'd need to query the mappings themselves
+    @app.route('/mappings', methods=['GET'])
+    def get_mappings():
+        mappings = WorkoutExercise.query.all()
+        formatted_mappings = [m.format() for m in mappings]
+        return jsonify(formatted_mappings)
+
+    # error handlers
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            'success': False,
+            'error': 400,
+            'message': 'bad request'
+        }), 400
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 404,
+            'message': 'resource not found'
+        }), 404
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            'success': False,
+            'error': 422,
+            'message': 'unprocessable'
+        }), 422
+
+    @app.errorhandler(500)
+    def server_error(error):
+        return jsonify({
+            'success': False,
+            'error': 500,
+            'message': 'server error'
+        }), 500
 
     return app
 
