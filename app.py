@@ -30,35 +30,33 @@ def create_app(test_config=None):
             'success': True
         })
 
-    # @app.route('/workouts', methods=['POST'])
-    # def create_workout():
-    #     try:
-    #         all_data = request.get_json()
-    #         name = all_data['name']
-    #         focus = all_data['focus']
-    #         repeat = all_data['repeat']
-    #
-    #         for value in [name, focus, repeat]:
-    #             if value is None:
-    #                 abort(400)
-    #
-    #         workout = Workout(
-    #             name=name,
-    #             focus=focus,
-    #             repeat=repeat
-    #         )
-    #     except:
-    #         abort(400)
-    #
-    #     try:
-    #         workout.insert()
-    #     except:
-    #         abort(500)
-    #
-    #     return jsonify({
-    #         'success': True,
-    #         'id': workout.id
-    #     })
+    @app.route('/workouts', methods=['POST'])
+    def create_workout():
+        try:
+            all_data = request.get_json()
+            name = all_data['name']
+            focus = all_data['focus']
+            repeat = all_data['repeat']
+
+            for value in [name, focus, repeat]:
+                if value is None:
+                    abort(400)
+
+            workout = Workout(
+                name=name,
+                focus=focus,
+                repeat=repeat
+            )
+
+            # could check whether we expect this to fail based on inputs, and abort(500) otherwise
+            workout.insert()
+        except:
+            abort(400)
+
+        return jsonify({
+            'success': True,
+            'id': workout.id
+        })
 
     @app.route('/workouts/<int:workout_id>', methods=['GET'])
     def get_workout(workout_id):
