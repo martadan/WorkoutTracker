@@ -46,6 +46,19 @@ def create_app(test_config=None):
         formatted_mappings = [m.format() for m in mappings]
         return jsonify(formatted_mappings)
 
+    @app.route('/exercises/<int:exercise_id>')
+    def get_exercise(exercise_id):
+        exercise = Exercise.query.get(exercise_id)
+        if exercise is not None:
+            return jsonify({
+                'success': True,
+                'exercise': exercise.format()
+            })
+        else:
+            return jsonify({
+                'success': False
+            }), 404
+
     @app.route('/workouts/<int:workout_id>')
     def get_workout(workout_id):
         workout = Workout.query.get(workout_id)
