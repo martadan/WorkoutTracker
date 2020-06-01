@@ -75,6 +75,19 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(len(data['exercises']), 2)
 
+    def test_get_workout(self):
+        response = self.client().get('/workouts/1')
+        data = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['name'], 'test workout')
+
+    def test_get_workout_404(self):
+        response = self.client().get('/workouts/11')
+        data = json.loads(response.data)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(data['success'], False)
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
