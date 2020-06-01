@@ -91,12 +91,12 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         # self.assertEqual(len(data['workouts']), 1)
 
-    # def test_get_exercises(self):
-    #     response = self.client().get('/exercises')
-    #     data = json.loads(response.data)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     # self.assertEqual(len(data['exercises']), 2)
+    def test_get_exercises(self):
+        response = self.client().get('/exercises')
+        data = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        # self.assertEqual(len(data['exercises']), 2)
 
 
 # Make the tests conveniently executable
