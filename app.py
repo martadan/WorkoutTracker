@@ -31,7 +31,10 @@ def create_app(test_config=None):
     def get_workouts():
         workouts = Workout.query.all()
         formatted_workouts = [w.format() for w in workouts]
-        return jsonify(formatted_workouts)
+        return jsonify({
+            'workouts': formatted_workouts,
+            'success': True
+        })
 
     @app.route('/mappings')
     def get_mappings():
@@ -136,3 +139,4 @@ app = create_app()
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
+    # TODO revert back to 0.0.0.0 when not running locally
