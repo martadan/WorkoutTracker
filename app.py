@@ -21,7 +21,7 @@ def create_app(test_config=None):
     def home_page():
         return render_template('home.html')
 
-    @app.route('/exercises')
+    @app.route('/exercises', methods=['GET'])
     def get_exercises():
         exercises = Exercise.query.all()
         formatted_exercises = [e.format() for e in exercises]
@@ -30,7 +30,7 @@ def create_app(test_config=None):
             'success': True
         })
 
-    @app.route('/workouts')
+    @app.route('/workouts', methods=['GET'])
     def get_workouts():
         workouts = Workout.query.all()
         formatted_workouts = [w.format() for w in workouts]
@@ -40,13 +40,13 @@ def create_app(test_config=None):
         })
 
     # probably actually don't need this one - can't think of why I'd need to query the mappings themselves
-    @app.route('/mappings')
+    @app.route('/mappings', methods=['GET'])
     def get_mappings():
         mappings = WorkoutExercise.query.all()
         formatted_mappings = [m.format() for m in mappings]
         return jsonify(formatted_mappings)
 
-    @app.route('/exercises/<int:exercise_id>')
+    @app.route('/exercises/<int:exercise_id>', methods=['GET'])
     def get_exercise(exercise_id):
         exercise = Exercise.query.get(exercise_id)
         if exercise is not None:
@@ -59,7 +59,7 @@ def create_app(test_config=None):
                 'success': False
             }), 404
 
-    @app.route('/workouts/<int:workout_id>')
+    @app.route('/workouts/<int:workout_id>', methods=['GET'])
     def get_workout(workout_id):
         workout = Workout.query.get(workout_id)
         if workout is not None:
