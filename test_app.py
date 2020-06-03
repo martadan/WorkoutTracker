@@ -272,6 +272,14 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(data['success'], False)
 
+    # TODO add additonal tests for:
+    #   deleting Exercise
+    #     fail if any workouts use that exercise
+    #   deleting Workout
+    #     delete any associated WorkoutExercises rows, but not the Exercises themselves
+    #   patch to Exercise and Workout
+    #   RBAC
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
