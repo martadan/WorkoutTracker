@@ -37,6 +37,10 @@ def create_app(test_config=None):
             name = all_data['name']
             focus = all_data['focus']
             repeat = all_data['repeat']
+            if 'exercises' in all_data.keys():
+                exercises = all_data['exercises']
+            else:
+                exercises = None
 
             for value in [name, focus, repeat]:
                 if value is None:
@@ -47,11 +51,32 @@ def create_app(test_config=None):
                 focus=focus,
                 repeat=repeat
             )
-
-            # could check whether we expect this to fail based on inputs, and abort(500) otherwise
-            workout.insert()
         except:
             abort(400)
+
+        if exercises is None:
+            # insert Workout with no WorkoutExercises rows
+            try:
+                workout.insert()
+            except:
+                abort(400)
+        else:
+            # insert Workout, get id, then create WorkoutExercises rows
+            try:
+                workout.insert_without_commit()
+                for exercise in exercises:
+                    e_id = Exercise.query.filter(Exercise.name == exercise['name']).first().id
+                    workout_exercise = WorkoutExercise(
+                        workout_id=workout.id,
+                        exercise_id=e_id,
+                        sets=exercise['sets'],
+                        reps=exercise['reps'],
+                        weight=exercise['weight']
+                    )
+                    workout_exercise.insert_without_commit()
+                workout.update()
+            except:
+                abort(404)
 
         return jsonify({
             'success': True,

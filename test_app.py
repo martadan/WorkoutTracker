@@ -150,11 +150,12 @@ class WorkoutTestCase(unittest.TestCase):
 
         with self.app.app_context():
             matching_workouts = Workout.query.filter(Workout.name == 'new workout').count()
+            matching_exercises = len(Workout.query.filter(Workout.name == 'new workout').first().exercises)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(matching_workouts, 1)
-        self.assertEqual(len(matching_workouts.exercises), 2)
+        self.assertEqual(matching_exercises, 2)
 
     def test_create_workout_duplicate(self):
         workout_string = json.dumps({

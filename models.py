@@ -50,6 +50,9 @@ class Workout(db.Model):
     def insert_without_commit(self):
         db.session.add(self)
 
+    # def rollback(self):
+    #     db.session.rollback()
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -145,6 +148,9 @@ class WorkoutExercise(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
+
+    def insert_without_commit(self):
+        db.session.add(self)
 
     def delete(self):
         db.session.delete(self)
