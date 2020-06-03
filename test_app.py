@@ -102,34 +102,69 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
 
     def test_create_workout(self):
-        workout = Workout(
-            name='new workout',
-            focus='upper',
-            repeat=False
-        )
+        workout_string = json.dumps({
+            'name': 'new workout',
+            'focus': 'upper',
+            'repeat': False
+        })
         response = self.client().post(
             '/workouts',
-            data=workout.format_short(),
+            data=workout_string,
             content_type='application/json'
         )
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_workouts = Workout.query.filter(Workout.name == workout.name).count()
+            matching_workouts = Workout.query.filter(Workout.name == 'new workout').count()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(matching_workouts, 1)
 
-    def test_create_workout_duplicate(self):
-        workout = Workout(
-            name='test workout',
-            focus='upper',
-            repeat=False
-        )
+    def test_create_workout_with_exercises(self):
+        full_workout_string = json.dumps({
+            'name': 'new workout',
+            'focus': 'upper',
+            'repeat': False,
+            'exercises': [
+                {
+                    'name': 'kb swing',
+                    'sets': 5,
+                    'reps': 20,
+                    'weight': 40
+                },
+                {
+                    'name': 'kb goblet squat',
+                    'sets': 1,
+                    'reps': 15,
+                    'weight': 40
+                }
+            ]
+        })
         response = self.client().post(
             '/workouts',
-            data=workout.format_short(),
+            data=full_workout_string,
+            content_type='application/json'
+        )
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_workouts = Workout.query.filter(Workout.name == 'new workout').count()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(matching_workouts, 1)
+        self.assertEqual(len(matching_workouts.exercises), 2)
+
+    def test_create_workout_duplicate(self):
+        workout_string = json.dumps({
+            'name': 'test workout',
+            'focus': 'upper',
+            'repeat': False
+        })
+        response = self.client().post(
+            '/workouts',
+            data=workout_string,
             content_type='application/json'
         )
         data = json.loads(response.data)
@@ -138,20 +173,48 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
 
     def test_create_workout_malformed(self):
-        workout = Workout(
-            name='new workout',
-            focus=False,
-            repeat='wrong data type'
-        )
+        workout_string = json.dumps({
+            'name': 'bad workout',
+            'focus': False,
+            'repeat': 'wrong data type'
+        })
         response = self.client().post(
             '/workouts',
-            data=workout.format_short(),
+            data=workout_string,
             content_type='application/json'
         )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(data['success'], False)
+
+    def test_create_workout_incorrect_exercise(self):
+        full_workout_string = json.dumps({
+            'name': 'new workout',
+            'focus': 'upper',
+            'repeat': False,
+            'exercises': [
+                {
+                    'name': 'not a workout',
+                    'sets': 1,
+                    'reps': 1,
+                    'weight': 5
+                }
+            ]
+        })
+        response = self.client().post(
+            '/workouts',
+            data=full_workout_string,
+            content_type='application/json'
+        )
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_workouts = Workout.query.filter(Workout.name == 'new workout').count()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(matching_workouts, 0)
 
     def test_create_exercise(self):
         exercise = Exercise(
