@@ -111,6 +111,55 @@ def create_app(test_config=None):
                 'workout_id': workout_id
             })
 
+    @app.route('/workouts/<int:workout_id>', methods=['PATCH'])
+    def update_workout(workout_id):
+        workout = Workout.query.get(workout_id)
+        if workout is None:
+            abort(404)
+
+        try:
+            all_data = request.get_json()
+            name = all_data['name']
+            focus = all_data['focus']
+            repeat = all_data['repeat']
+            if 'exercises' in all_data.keys():
+                exercises = all_data['exercises']
+            else:
+                exercises = None
+            for value in [name, focus, repeat]:
+                if value is None:
+                    abort(400)
+
+            workout.name = name
+            workout.focus = focus
+            workout.repeat = repeat
+
+            for current_exercise in workout.exercises:
+                current_exercise.delete_without_commit()
+        except:
+            abort(400)
+
+        try:
+            for exercise in exercises:
+                e_id = Exercise.query.filter(Exercise.name == exercise['name']).first().id
+                workout_exercise = WorkoutExercise(
+                    workout_id=workout.id,
+                    exercise_id=e_id,
+                    sets=exercise['sets'],
+                    reps=exercise['reps'],
+                    weight=exercise['weight']
+                )
+                workout_exercise.insert_without_commit()
+
+            workout.update()
+        except:
+            abort(404)
+
+        return jsonify({
+            'success': True,
+            'id': workout.id
+        })
+
     @app.route('/exercises', methods=['GET'])
     def get_exercises():
         exercises = Exercise.query.all()
@@ -178,6 +227,33 @@ def create_app(test_config=None):
                 'success': True,
                 'exercise_id': exercise_id
             })
+
+    @app.route('/exercises/<int:exercise_id>', methods=['PATCH'])
+    def update_exercise(exercise_id):
+        exercise = Exercise.query.get(exercise_id)
+        if exercise is None:
+            abort(404)
+
+        try:
+            all_data = request.get_json()
+            name = all_data['name']
+            equipment = all_data['equipment']
+            target = all_data['target']
+            link = all_data['link']
+
+            exercise.name = name
+            exercise.equipment = equipment
+            exercise.target = target
+            exercise.link = link
+
+            exercise.update()
+        except:
+            abort(400)
+
+        return jsonify({
+            'success': True,
+            'exercise_id': exercise_id
+        })
 
     # probably actually don't need this one - can't think of why I'd need to query the mappings themselves
     @app.route('/mappings', methods=['GET'])

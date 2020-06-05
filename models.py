@@ -156,6 +156,9 @@ class WorkoutExercise(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def delete_without_commit(self):
+        db.session.delete(self)
+
     def update(self):
         db.session.commit()
 

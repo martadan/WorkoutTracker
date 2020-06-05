@@ -218,36 +218,36 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(matching_workouts, 0)
 
     def test_create_exercise(self):
-        exercise = Exercise(
-            name='bodyweight squat',
-            equipment='bodyweight',
-            target='reps',
-            link='another link...'
-        )
+        exercise_string = json.dumps({
+            'name': 'bodyweight squat',
+            'equipment': 'bodyweight',
+            'target': 'reps',
+            'link': 'another link...'
+        })
         response = self.client().post(
             '/exercises',
-            data=exercise.format_short(),
+            data=exercise_string,
             content_type='application/json'
         )
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_exercises = Exercise.query.filter(Exercise.name == exercise.name).count()
+            matching_exercises = Exercise.query.filter(Exercise.name == 'bodyweight squat').count()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(matching_exercises, 1)
 
     def test_create_exercise_duplicate(self):
-        exercise = Exercise(
-            name='kb goblet squat',
-            equipment='kettlebell',
-            target='reps',
-            link='another link...'
-        )
+        exercise_string = json.dumps({
+            'name': 'kb goblet squat',
+            'equipment': 'kettlebell',
+            'target': 'reps',
+            'link': 'another link...'
+        })
         response = self.client().post(
             '/exercises',
-            data=exercise.format_short(),
+            data=exercise_string,
             content_type='application/json'
         )
         data = json.loads(response.data)
@@ -256,15 +256,15 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
 
     def test_create_exercise_malformed(self):
-        exercise = Exercise(
-            name='wrong data types',
-            equipment=None,
-            target=42,
-            link=False
-        )
+        exercise_string = json.dumps({
+            'name': 'wrong data types',
+            'equipment': None,
+            'target': 42,
+            'link': False
+        })
         response = self.client().post(
             '/exercises',
-            data=exercise.format_short(),
+            data=exercise_string,
             content_type='application/json'
         )
         data = json.loads(response.data)
@@ -325,8 +325,151 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertIsNotNone(matching_exercise)
 
+    def test_update_workout(self):
+        full_workout_string = json.dumps({
+            'name': 'updated workout',
+            'focus': 'upper',
+            'repeat': False,
+            'exercises': [
+                {
+                    'name': 'kb goblet squat',
+                    'sets': 4,
+                    'reps': 12,
+                    'weight': 40
+                }
+            ]
+        })
+        update_id = 1
+
+        response = self.client().patch(
+            f'/workouts/{update_id}',
+            data=full_workout_string,
+            content_type='application/json'
+        )
+
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_workout = Workout.query.filter(Workout.name == 'updated workout').first()
+            matching_exercises = len(matching_workout.exercises)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertIsNotNone(matching_workout)
+        self.assertEqual(matching_exercises, 1)
+
+    def test_update_workout_out_of_bounds(self):
+        full_workout_string = json.dumps({
+            'name': 'updated workout',
+            'focus': 'upper',
+            'repeat': False,
+            'exercises': [
+                {
+                    'name': 'kb goblet squat',
+                    'sets': 4,
+                    'reps': 12,
+                    'weight': 40
+                }
+            ]
+        })
+        update_id = 11
+
+        response = self.client().patch(
+            f'/workouts/{update_id}',
+            data=full_workout_string,
+            content_type='application/json'
+        )
+
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(data['success'], False)
+
+    def test_update_workout_bad_exercise(self):
+        full_workout_string = json.dumps({
+            'name': 'updated workout',
+            'focus': 'upper',
+            'repeat': False,
+            'exercises': [
+                {
+                    'name': 'kb goblet squat',
+                    'sets': 4,
+                    'reps': 12,
+                    'weight': 40
+                },
+                {
+                    'name': 'not an exercise',
+                    'sets': 100,
+                    'reps': 6,
+                    'weight': 0.5
+                }
+            ]
+        })
+        update_id = 1
+
+        response = self.client().patch(
+            f'/workouts/{update_id}',
+            data=full_workout_string,
+            content_type='application/json'
+        )
+
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_workout = Workout.query.filter(Workout.name == 'updated workout')
+            old_workout = Workout.query.filter(Workout.name == 'test workout')
+            previous_mapping = WorkoutExercise.query.first()
+            previous_mapping_weight = previous_mapping.weight
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertIsNotNone(matching_workout)
+        self.assertIsNotNone(old_workout)
+        self.assertEqual(previous_mapping_weight, 4)
+
+    def test_update_exercise(self):
+        exercise_id = 1
+        exercise_string = json.dumps({
+            'name': 'barbell front squat',
+            'equipment': 'barbell',
+            'target': 'reps',
+            'link': 'link to video here'
+        })
+
+        response = self.client().patch(
+            f'/exercises/{exercise_id}',
+            data=exercise_string,
+            content_type='application/json'
+        )
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_exercises = Exercise.query.filter(Exercise.name == 'barbell front squat').count()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(matching_exercises, 1)
+
+    def test_update_exercise_out_of_bounds(self):
+        exercise_id = 11
+        exercise_string = json.dumps({
+            'name': 'barbell front squat',
+            'equipment': 'barbell',
+            'target': 'reps',
+            'link': 'link to video here'
+        })
+
+        response = self.client().patch(
+            f'/exercises/{exercise_id}',
+            data=exercise_string,
+            content_type='application/json'
+        )
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(data['success'], False)
+
     # TODO add additional tests for:
-    #   patch to Exercise and Workout
     #   RBAC
 
 
