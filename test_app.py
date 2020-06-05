@@ -59,7 +59,7 @@ class WorkoutTestCase(unittest.TestCase):
         Has to be in this awkward camelCase to overload method in TestCase
         """
         # drop all tables so they're recreated in the setUp method
-        drop_db(self.app)
+        drop_db()
 
     def test_get_workouts(self):
         response = self.client().get('/workouts')
@@ -272,11 +272,60 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(data['success'], False)
 
-    # TODO add additonal tests for:
-    #   deleting Exercise
-    #     fail if any workouts use that exercise
-    #   deleting Workout
-    #     delete any associated WorkoutExercises rows, but not the Exercises themselves
+    def test_delete_workout(self):
+        response = self.client().delete('/workouts/1')
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_workout = Workout.query.get(1)
+            matching_mappings = WorkoutExercise.query.filter(WorkoutExercise.workout_id == 1).count()
+            matching_exercise = Exercise.query.get(1)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['workout_id'], 1)
+        self.assertIsNone(matching_workout)
+        self.assertEqual(matching_mappings, 0)
+        self.assertIsNotNone(matching_exercise)  # do not want exercise itself deleted
+
+    def test_delete_workout_out_of_bounds(self):
+        response = self.client().delete('/workouts/11')
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(data['success'], False)
+
+    def test_delete_exercise(self):
+        response = self.client().delete('/exercises/2')
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_exercise = Exercise.query.get(2)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['exercise_id'], 2)
+        self.assertIsNone(matching_exercise)
+
+    def test_delete_exercise_out_of_bound(self):
+        response = self.client().delete('/exercises/11')
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(data['success'], False)
+
+    def test_delete_exercise_in_use(self):
+        response = self.client().delete('/exercises/1')
+        data = json.loads(response.data)
+
+        with self.app.app_context():
+            matching_exercise = Exercise.query.get(1)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertIsNotNone(matching_exercise)
+
+    # TODO add additional tests for:
     #   patch to Exercise and Workout
     #   RBAC
 

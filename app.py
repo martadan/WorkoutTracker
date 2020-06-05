@@ -94,6 +94,23 @@ def create_app(test_config=None):
         else:
             abort(404)
 
+    @app.route('/workouts/<int:workout_id>', methods=['DELETE'])
+    def delete_workout(workout_id):
+        workout = Workout.query.get(workout_id)
+
+        if workout is None:
+            abort(404)
+        else:
+            try:
+                workout.delete()
+            except:
+                abort(404)
+
+            return jsonify({
+                'success': True,
+                'workout_id': workout_id
+            })
+
     @app.route('/exercises', methods=['GET'])
     def get_exercises():
         exercises = Exercise.query.all()
@@ -143,6 +160,24 @@ def create_app(test_config=None):
             })
         else:
             abort(404)
+
+    @app.route('/exercises/<int:exercise_id>', methods=['DELETE'])
+    def delete_exercise(exercise_id):
+        exercise = Exercise.query.get(exercise_id)
+        if exercise is None:
+            abort(404)
+        elif WorkoutExercise.query.filter(WorkoutExercise.exercise_id == exercise_id).count() > 0:
+            abort(400)
+        else:
+            try:
+                exercise.delete()
+            except:
+                abort(500)
+
+            return jsonify({
+                'success': True,
+                'exercise_id': exercise_id
+            })
 
     # probably actually don't need this one - can't think of why I'd need to query the mappings themselves
     @app.route('/mappings', methods=['GET'])

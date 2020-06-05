@@ -197,5 +197,5 @@ def setup_db(app, database_path=database_path):
     db.create_all()
 
 
-def drop_db(app):
+def drop_db():
     db.drop_all()
