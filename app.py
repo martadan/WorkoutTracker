@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
 from models import setup_db, Exercise, Workout, WorkoutExercise
+from auth import CustomAuthError, requires_auth
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -294,6 +295,14 @@ def create_app(test_config=None):
             'error': 500,
             'message': 'server error'
         }), 500
+
+    @app.errorhandler(CustomAuthError)
+    def auth_error(error):
+        return jsonify({
+            'success': False,
+            'error': error.status_code,
+            'message': error.error
+        }), error.status_code
 
     return app
 
