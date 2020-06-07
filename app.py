@@ -23,6 +23,7 @@ def create_app(test_config=None):
         return render_template('home.html')
 
     @app.route('/workouts', methods=['GET'])
+    # @requires_auth('get:workout')
     def get_workouts():
         workouts = Workout.query.all()
         formatted_workouts = [w.format() for w in workouts]
@@ -31,7 +32,20 @@ def create_app(test_config=None):
             'success': True
         })
 
+    @app.route('/workouts/<int:workout_id>', methods=['GET'])
+    # @requires_auth('get:workout')
+    def get_workout(workout_id):
+        workout = Workout.query.get(workout_id)
+        if workout is not None:
+            return jsonify({
+                'success': True,
+                'workout': workout.format()
+            })
+        else:
+            abort(404)
+
     @app.route('/workouts', methods=['POST'])
+    # @requires_auth('post:workout')
     def create_workout():
         try:
             all_data = request.get_json()
@@ -52,14 +66,14 @@ def create_app(test_config=None):
                 focus=focus,
                 repeat=repeat
             )
-        except:
+        except Exception:
             abort(400)
 
         if exercises is None:
             # insert Workout with no WorkoutExercises rows
             try:
                 workout.insert()
-            except:
+            except Exception:
                 abort(400)
         else:
             # insert Workout, get id, then create WorkoutExercises rows
@@ -76,7 +90,7 @@ def create_app(test_config=None):
                     )
                     workout_exercise.insert_without_commit()
                 workout.update()
-            except:
+            except Exception:
                 abort(404)
 
         return jsonify({
@@ -84,35 +98,8 @@ def create_app(test_config=None):
             'id': workout.id
         })
 
-    @app.route('/workouts/<int:workout_id>', methods=['GET'])
-    def get_workout(workout_id):
-        workout = Workout.query.get(workout_id)
-        if workout is not None:
-            return jsonify({
-                'success': True,
-                'workout': workout.format()
-            })
-        else:
-            abort(404)
-
-    @app.route('/workouts/<int:workout_id>', methods=['DELETE'])
-    def delete_workout(workout_id):
-        workout = Workout.query.get(workout_id)
-
-        if workout is None:
-            abort(404)
-        else:
-            try:
-                workout.delete()
-            except:
-                abort(404)
-
-            return jsonify({
-                'success': True,
-                'workout_id': workout_id
-            })
-
     @app.route('/workouts/<int:workout_id>', methods=['PATCH'])
+    # @requires_auth('patch:workout')
     def update_workout(workout_id):
         workout = Workout.query.get(workout_id)
         if workout is None:
@@ -137,7 +124,7 @@ def create_app(test_config=None):
 
             for current_exercise in workout.exercises:
                 current_exercise.delete_without_commit()
-        except:
+        except Exception:
             abort(400)
 
         try:
@@ -153,7 +140,7 @@ def create_app(test_config=None):
                 workout_exercise.insert_without_commit()
 
             workout.update()
-        except:
+        except Exception:
             abort(404)
 
         return jsonify({
@@ -161,7 +148,26 @@ def create_app(test_config=None):
             'id': workout.id
         })
 
+    @app.route('/workouts/<int:workout_id>', methods=['DELETE'])
+    # @requires_auth('delete:workout')
+    def delete_workout(workout_id):
+        workout = Workout.query.get(workout_id)
+
+        if workout is None:
+            abort(404)
+        else:
+            try:
+                workout.delete()
+            except Exception:
+                abort(404)
+
+        return jsonify({
+            'success': True,
+            'workout_id': workout_id
+        })
+
     @app.route('/exercises', methods=['GET'])
+    # @requires_auth('get:exercise')
     def get_exercises():
         exercises = Exercise.query.all()
         formatted_exercises = [e.format() for e in exercises]
@@ -170,7 +176,20 @@ def create_app(test_config=None):
             'success': True
         })
 
+    @app.route('/exercises/<int:exercise_id>', methods=['GET'])
+    # @requires_auth('get:exercise')
+    def get_exercise(exercise_id):
+        exercise = Exercise.query.get(exercise_id)
+        if exercise is not None:
+            return jsonify({
+                'success': True,
+                'exercise': exercise.format()
+            })
+        else:
+            abort(404)
+
     @app.route('/exercises', methods=['POST'])
+    # @requires_auth('post:exercise')
     def create_exercise():
         try:
             all_data = request.get_json()
@@ -192,7 +211,7 @@ def create_app(test_config=None):
 
             # could check whether we expect this to fail based on inputs, and abort(500) otherwise
             exercise.insert()
-        except:
+        except Exception:
             abort(400)
 
         return jsonify({
@@ -200,36 +219,8 @@ def create_app(test_config=None):
             'id': exercise.id
         })
 
-    @app.route('/exercises/<int:exercise_id>', methods=['GET'])
-    def get_exercise(exercise_id):
-        exercise = Exercise.query.get(exercise_id)
-        if exercise is not None:
-            return jsonify({
-                'success': True,
-                'exercise': exercise.format()
-            })
-        else:
-            abort(404)
-
-    @app.route('/exercises/<int:exercise_id>', methods=['DELETE'])
-    def delete_exercise(exercise_id):
-        exercise = Exercise.query.get(exercise_id)
-        if exercise is None:
-            abort(404)
-        elif WorkoutExercise.query.filter(WorkoutExercise.exercise_id == exercise_id).count() > 0:
-            abort(400)
-        else:
-            try:
-                exercise.delete()
-            except:
-                abort(500)
-
-            return jsonify({
-                'success': True,
-                'exercise_id': exercise_id
-            })
-
     @app.route('/exercises/<int:exercise_id>', methods=['PATCH'])
+    # @requires_auth('patch:exercise')
     def update_exercise(exercise_id):
         exercise = Exercise.query.get(exercise_id)
         if exercise is None:
@@ -248,7 +239,7 @@ def create_app(test_config=None):
             exercise.link = link
 
             exercise.update()
-        except:
+        except Exception:
             abort(400)
 
         return jsonify({
@@ -256,12 +247,24 @@ def create_app(test_config=None):
             'exercise_id': exercise_id
         })
 
-    # probably actually don't need this one - can't think of why I'd need to query the mappings themselves
-    @app.route('/mappings', methods=['GET'])
-    def get_mappings():
-        mappings = WorkoutExercise.query.all()
-        formatted_mappings = [m.format() for m in mappings]
-        return jsonify(formatted_mappings)
+    @app.route('/exercises/<int:exercise_id>', methods=['DELETE'])
+    # @requires_auth('delete:exercise')
+    def delete_exercise(exercise_id):
+        exercise = Exercise.query.get(exercise_id)
+        if exercise is None:
+            abort(404)
+        elif WorkoutExercise.query.filter(WorkoutExercise.exercise_id == exercise_id).count() > 0:
+            abort(400)
+        else:
+            try:
+                exercise.delete()
+            except Exception:
+                abort(500)
+
+            return jsonify({
+                'success': True,
+                'exercise_id': exercise_id
+            })
 
     # error handlers
     @app.errorhandler(400)

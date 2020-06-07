@@ -6,7 +6,7 @@ from urllib.request import urlopen
 
 DOMAIN = 'dev-l4529u72.auth0.com'
 ALGORITHMS = ['RS256']
-AUDIENCE = 'dm-workout'
+AUDIENCE = 'workout'
 
 
 class CustomAuthError(Exception):
