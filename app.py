@@ -23,7 +23,7 @@ def create_app(test_config=None):
         return render_template('home.html')
 
     @app.route('/workouts', methods=['GET'])
-    # @requires_auth('get:workout')
+    @requires_auth('get:workout')
     def get_workouts():
         workouts = Workout.query.all()
         formatted_workouts = [w.format() for w in workouts]
@@ -33,7 +33,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/workouts/<int:workout_id>', methods=['GET'])
-    # @requires_auth('get:workout')
+    @requires_auth('get:workout')
     def get_workout(workout_id):
         workout = Workout.query.get(workout_id)
         if workout is not None:
