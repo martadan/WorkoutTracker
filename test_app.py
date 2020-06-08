@@ -66,6 +66,13 @@ class WorkoutTestCase(unittest.TestCase):
         # drop all tables so they're recreated in the setUp method
         drop_db()
 
+    def test_home_route(self):
+        response = self.client().get('/')
+        data = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['message'], 'Hello World!')
+
     def test_get_workouts(self):
         response = self.client().get('/workouts', headers=ATHLETE_HEADER)
         data = json.loads(response.data)

@@ -20,7 +20,11 @@ def create_app(test_config=None):
 
     @app.route('/', methods=['GET'])
     def home_page():
-        return render_template('home.html')
+        # return render_template('home.html')
+        return jsonify({
+            'message': 'Hello World!',
+            'success': True
+        })
 
     @app.route('/workouts', methods=['GET'])
     @requires_auth('get:workout')
