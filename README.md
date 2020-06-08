@@ -157,3 +157,14 @@ Returns json and status code (200/404):
   "exercise_id": int, id of exercise deleted
 }
 ```
+
+## Future plans
+#### Minimum Viable Product
+1. Create a separate front-end
+2. Create a way to log actual workouts (vs planned workouts)
+3. Integrate into front-end
+4. Start testing out the app
+#### Additional development
+1. Create separate table for tracking cardio and skill-based workouts (particularly grappling/striking)
+2. Determine how to integrate those tables
+3. Integrate this into the UI as well
