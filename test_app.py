@@ -493,7 +493,7 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertEqual(data['success'], False)
 
-    def test_insufficient_access(self):
+    def test_create_exercise_permission_error(self):
         exercise_string = json.dumps({
             'name': 'bodyweight squat',
             'equipment': 'bodyweight',
@@ -506,6 +506,13 @@ class WorkoutTestCase(unittest.TestCase):
             content_type='application/json',
             headers=ATHLETE_HEADER
         )
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(data['success'], False)
+
+    def test_delete_workout_permission_error(self):
+        response = self.client().delete('/workouts/1', headers=ATHLETE_HEADER)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 403)
