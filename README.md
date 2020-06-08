@@ -6,7 +6,7 @@
 I decided to build one out myself to allow the flexibility I want without all the extra features I don't need</p>
 
 <p>Published live at:<br>
-(TODO add url here)</p>
+https://dm-workout.herokuapp.com/</p>
 
 
 ## Current state
