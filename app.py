@@ -45,7 +45,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route('/workouts', methods=['POST'])
-    # @requires_auth('post:workout')
+    @requires_auth('post:workout')
     def create_workout():
         try:
             all_data = request.get_json()
@@ -99,7 +99,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/workouts/<int:workout_id>', methods=['PATCH'])
-    # @requires_auth('patch:workout')
+    @requires_auth('patch:workout')
     def update_workout(workout_id):
         workout = Workout.query.get(workout_id)
         if workout is None:
@@ -149,7 +149,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/workouts/<int:workout_id>', methods=['DELETE'])
-    # @requires_auth('delete:workout')
+    @requires_auth('delete:workout')
     def delete_workout(workout_id):
         workout = Workout.query.get(workout_id)
 
@@ -167,7 +167,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/exercises', methods=['GET'])
-    # @requires_auth('get:exercise')
+    @requires_auth('get:exercise')
     def get_exercises():
         exercises = Exercise.query.all()
         formatted_exercises = [e.format() for e in exercises]
@@ -177,7 +177,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/exercises/<int:exercise_id>', methods=['GET'])
-    # @requires_auth('get:exercise')
+    @requires_auth('get:exercise')
     def get_exercise(exercise_id):
         exercise = Exercise.query.get(exercise_id)
         if exercise is not None:
@@ -189,7 +189,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route('/exercises', methods=['POST'])
-    # @requires_auth('post:exercise')
+    @requires_auth('post:exercise')
     def create_exercise():
         try:
             all_data = request.get_json()
@@ -220,7 +220,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/exercises/<int:exercise_id>', methods=['PATCH'])
-    # @requires_auth('patch:exercise')
+    @requires_auth('patch:exercise')
     def update_exercise(exercise_id):
         exercise = Exercise.query.get(exercise_id)
         if exercise is None:
@@ -248,7 +248,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/exercises/<int:exercise_id>', methods=['DELETE'])
-    # @requires_auth('delete:exercise')
+    @requires_auth('delete:exercise')
     def delete_exercise(exercise_id):
         exercise = Exercise.query.get(exercise_id)
         if exercise is None:

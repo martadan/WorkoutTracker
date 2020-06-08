@@ -6,6 +6,11 @@ from flask_sqlalchemy import SQLAlchemy
 from app import create_app
 from models import setup_db, drop_db, Workout, Exercise, WorkoutExercise
 
+ATHLETE_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVNlRSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVkZTQ3MTQxNTJlODYwMDE5YTViM2NkIiwiYXVkIjoid29ya291dCIsImlhdCI6MTU5MTY1NDIwMCwiZXhwIjoxNTkxNjYxMzk5LCJhenAiOiJhYlF0cjlxeFJzdUl6MWdicjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmV4ZXJjaXNlIiwiZ2V0OndvcmtvdXQiLCJwYXRjaDp3b3Jrb3V0IiwicG9zdDp3b3Jrb3V0Il19.uhVKtMDCn3vvnkUVIWKQutTjdXB5TBXAGMMuM7wk-_zv4jmRYH2rRh4tbrlY0jPkGklmTfLapQBLYcHw1sagCQiMJXY5EQY72uLwToMI8qz-22jLeu1u8E3xtkLrcoX3PWmhIBncpgS5vwPhfyE7ntXlHbEEk6vUHoaVCbbfQkhx8hPV2j3I8LOMx27C3_2i8WWrEsQCe5d2xkfFdllbA3ctePuju1Pk7s81V6IMoldvVc4bUFOH2khBfkxQ0Ov0UbXBlXe1edsKrEzZ9yttDlJ5sxpuOyXygnYUvBGNk2jMyPBBhirVJnBW4KUEljHDQctk7cZRksqALgGWmZTdFA'
+ATHLETE_HEADER = {'Authorization': f'Bearer {ATHLETE_TOKEN}'}
+COACH_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVNlRSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVkZTQ1YWIxNTJlODYwMDE5YTViMTQxIiwiYXVkIjoid29ya291dCIsImlhdCI6MTU5MTY1NDI2NywiZXhwIjoxNTkxNjYxNDY2LCJhenAiOiJhYlF0cjlxeFJzdUl6MWdicjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmV4ZXJjaXNlIiwiZGVsZXRlOndvcmtvdXQiLCJnZXQ6ZXhlcmNpc2UiLCJnZXQ6d29ya291dCIsInBhdGNoOmV4ZXJjaXNlIiwicGF0Y2g6d29ya291dCIsInBvc3Q6ZXhlcmNpc2UiLCJwb3N0OndvcmtvdXQiXX0.rbFCbBqFpl3jPAnqwNmXYPR5cUSGIA1NZu8txnJ19mNA2mUl5Py14z-2N_sXS3IkrRT0HLofnDA1ndfG3-R87dM44pOZ6-Jwp9UiGKpo7CZu5ZylykaSAjq8nf2jpKyEO8hmsSnAHi24CuVGNVcipk5N6QBa9v18hQe5xJ7dBvrkbT1xgx3pso0nLmiz9lDlCSlFnJ7isMbLdWaieQiyYM7Z8nAIjYT4f7ckR2OAEBAg9acjFN_H1uIuha2Tdd0uVt1Ed6vMcixEkJN73sh0KQ2TKjrAJWzMa-KDHspRlOA4V286lOEvbuJRsrX-_sij_4BcKXV7A2AAKJdViLs4VA'
+COACH_HEADER = {'Authorization': f'Bearer {COACH_TOKEN}'}
+
 
 class WorkoutTestCase(unittest.TestCase):
 
@@ -62,41 +67,41 @@ class WorkoutTestCase(unittest.TestCase):
         drop_db()
 
     def test_get_workouts(self):
-        response = self.client().get('/workouts')
+        response = self.client().get('/workouts', headers=ATHLETE_HEADER)
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(len(data['workouts']), 1)
 
     def test_get_exercises(self):
-        response = self.client().get('/exercises')
+        response = self.client().get('/exercises', headers=ATHLETE_HEADER)
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(len(data['exercises']), 2)
 
     def test_get_workout(self):
-        response = self.client().get('/workouts/1')
+        response = self.client().get('/workouts/1', headers=ATHLETE_HEADER)
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['workout']['name'], 'test workout')
 
     def test_get_workout_404(self):
-        response = self.client().get('/workouts/11')
+        response = self.client().get('/workouts/11', headers=ATHLETE_HEADER)
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
 
     def test_get_exercise(self):
-        response = self.client().get('/exercises/1')
+        response = self.client().get('/exercises/1', headers=ATHLETE_HEADER)
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['exercise']['name'], 'kb swing')
 
     def test_get_exercise_404(self):
-        response = self.client().get('/exercises/11')
+        response = self.client().get('/exercises/11', headers=ATHLETE_HEADER)
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
@@ -110,7 +115,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().post(
             '/workouts',
             data=workout_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=ATHLETE_HEADER
         )
         data = json.loads(response.data)
 
@@ -144,7 +150,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().post(
             '/workouts',
             data=full_workout_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=ATHLETE_HEADER
         )
         data = json.loads(response.data)
 
@@ -166,7 +173,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().post(
             '/workouts',
             data=workout_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=ATHLETE_HEADER
         )
         data = json.loads(response.data)
 
@@ -182,7 +190,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().post(
             '/workouts',
             data=workout_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=ATHLETE_HEADER
         )
         data = json.loads(response.data)
 
@@ -206,7 +215,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().post(
             '/workouts',
             data=full_workout_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=ATHLETE_HEADER
         )
         data = json.loads(response.data)
 
@@ -227,7 +237,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().post(
             '/exercises',
             data=exercise_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=COACH_HEADER
         )
         data = json.loads(response.data)
 
@@ -248,7 +259,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().post(
             '/exercises',
             data=exercise_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=COACH_HEADER
         )
         data = json.loads(response.data)
 
@@ -265,7 +277,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().post(
             '/exercises',
             data=exercise_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=COACH_HEADER
         )
         data = json.loads(response.data)
 
@@ -273,7 +286,7 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
 
     def test_delete_workout(self):
-        response = self.client().delete('/workouts/1')
+        response = self.client().delete('/workouts/1', headers=COACH_HEADER)
         data = json.loads(response.data)
 
         with self.app.app_context():
@@ -289,14 +302,14 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertIsNotNone(matching_exercise)  # do not want exercise itself deleted
 
     def test_delete_workout_out_of_bounds(self):
-        response = self.client().delete('/workouts/11')
+        response = self.client().delete('/workouts/11', headers=COACH_HEADER)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
 
     def test_delete_exercise(self):
-        response = self.client().delete('/exercises/2')
+        response = self.client().delete('/exercises/2', headers=COACH_HEADER)
         data = json.loads(response.data)
 
         with self.app.app_context():
@@ -308,14 +321,14 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertIsNone(matching_exercise)
 
     def test_delete_exercise_out_of_bound(self):
-        response = self.client().delete('/exercises/11')
+        response = self.client().delete('/exercises/11', headers=COACH_HEADER)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
 
     def test_delete_exercise_in_use(self):
-        response = self.client().delete('/exercises/1')
+        response = self.client().delete('/exercises/1', headers=COACH_HEADER)
         data = json.loads(response.data)
 
         with self.app.app_context():
@@ -344,7 +357,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().patch(
             f'/workouts/{update_id}',
             data=full_workout_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=ATHLETE_HEADER
         )
 
         data = json.loads(response.data)
@@ -377,7 +391,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().patch(
             f'/workouts/{update_id}',
             data=full_workout_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=ATHLETE_HEADER
         )
 
         data = json.loads(response.data)
@@ -410,7 +425,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().patch(
             f'/workouts/{update_id}',
             data=full_workout_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=ATHLETE_HEADER
         )
 
         data = json.loads(response.data)
@@ -439,7 +455,8 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().patch(
             f'/exercises/{exercise_id}',
             data=exercise_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=COACH_HEADER
         )
         data = json.loads(response.data)
 
@@ -462,15 +479,37 @@ class WorkoutTestCase(unittest.TestCase):
         response = self.client().patch(
             f'/exercises/{exercise_id}',
             data=exercise_string,
-            content_type='application/json'
+            content_type='application/json',
+            headers=COACH_HEADER
         )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
 
-    # TODO add additional tests for:
-    #   RBAC
+    def test_no_header(self):
+        response = self.client().get('/workouts')
+        data = json.loads(response.data)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(data['success'], False)
+
+    def test_insufficient_access(self):
+        exercise_string = json.dumps({
+            'name': 'bodyweight squat',
+            'equipment': 'bodyweight',
+            'target': 'reps',
+            'link': 'another link...'
+        })
+        response = self.client().post(
+            '/exercises',
+            data=exercise_string,
+            content_type='application/json',
+            headers=ATHLETE_HEADER
+        )
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(data['success'], False)
 
 
 # Make the tests conveniently executable
