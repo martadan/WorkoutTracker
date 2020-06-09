@@ -10,29 +10,29 @@ ATHLETE_TOKEN = \
     'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVNl' \
     'RSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViIjo' \
     'iYXV0aDB8NWVkZTQ3MTQxNTJlODYwMDE5YTViM2NkIiwiYXVkIjoid29ya291dCIsImlhd' \
-    'CI6MTU5MTY1NDIwMCwiZXhwIjoxNTkxNjYxMzk5LCJhenAiOiJhYlF0cjlxeFJzdUl6MWd' \
+    'CI6MTU5MTcxODY2OSwiZXhwIjoxNTkxNzI1ODY4LCJhenAiOiJhYlF0cjlxeFJzdUl6MWd' \
     'icjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmV4Z' \
     'XJjaXNlIiwiZ2V0OndvcmtvdXQiLCJwYXRjaDp3b3Jrb3V0IiwicG9zdDp3b3Jrb3V0Il1' \
-    '9.uhVKtMDCn3vvnkUVIWKQutTjdXB5TBXAGMMuM7wk-_zv4jmRYH2rRh4tbrlY0jPkGklm' \
-    'TfLapQBLYcHw1sagCQiMJXY5EQY72uLwToMI8qz-22jLeu1u8E3xtkLrcoX3PWmhIBncpg' \
-    'S5vwPhfyE7ntXlHbEEk6vUHoaVCbbfQkhx8hPV2j3I8LOMx27C3_2i8WWrEsQCe5d2xkfF' \
-    'dllbA3ctePuju1Pk7s81V6IMoldvVc4bUFOH2khBfkxQ0Ov0UbXBlXe1edsKrEzZ9yttDl' \
-    'J5sxpuOyXygnYUvBGNk2jMyPBBhirVJnBW4KUEljHDQctk7cZRksqALgGWmZTdFA'
+    '9.SbAbru_ypIVhx-rNopfX9kxkA7MF4FZsPrfgOTn2tILUamwzgT2IrIsYc4Dxm1dJzpi-' \
+    'nx8cvcv-oS2DAil6GIS8c0x4DQRc0aoyw0C29ad4Zd759tZfQvZAh-qTxYoi0FN-obo2Y1' \
+    'F7u4Zdq_mPrBLG1BF98QkI4RcelZMu3DBhofHEjgOrwTnWdvjdMfD0n9D3xfkZzSb-o7Jh' \
+    'lloFps3etXRcTb1TfwQLF28u9QSlYPyayLAIFDO5jO91stahRZ_RFk7_E34I0Ys9iEsWl3' \
+    'WtaPCHyrNEL2_xAgyHp1El1RccQPcKZuSQ75-tZEBP9_31pVWqcjDsj_UNRysUSw'
 ATHLETE_HEADER = {'Authorization': f'Bearer {ATHLETE_TOKEN}'}
 COACH_TOKEN = \
-    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVN' \
-    'lRSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViI' \
-    'joiYXV0aDB8NWVkZTQ1YWIxNTJlODYwMDE5YTViMTQxIiwiYXVkIjoid29ya291dCIsIm' \
-    'lhdCI6MTU5MTY1NDI2NywiZXhwIjoxNTkxNjYxNDY2LCJhenAiOiJhYlF0cjlxeFJzdUl' \
-    '6MWdicjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVs' \
-    'ZXRlOmV4ZXJjaXNlIiwiZGVsZXRlOndvcmtvdXQiLCJnZXQ6ZXhlcmNpc2UiLCJnZXQ6d' \
-    '29ya291dCIsInBhdGNoOmV4ZXJjaXNlIiwicGF0Y2g6d29ya291dCIsInBvc3Q6ZXhlcm' \
-    'Npc2UiLCJwb3N0OndvcmtvdXQiXX0.rbFCbBqFpl3jPAnqwNmXYPR5cUSGIA1NZu8txnJ' \
-    '19mNA2mUl5Py14z-2N_sXS3IkrRT0HLofnDA1ndfG3-R87dM44pOZ6-Jwp9UiGKpo7CZu' \
-    '5ZylykaSAjq8nf2jpKyEO8hmsSnAHi24CuVGNVcipk5N6QBa9v18hQe5xJ7dBvrkbT1xg' \
-    'x3pso0nLmiz9lDlCSlFnJ7isMbLdWaieQiyYM7Z8nAIjYT4f7ckR2OAEBAg9acjFN_H1u' \
-    'Iuha2Tdd0uVt1Ed6vMcixEkJN73sh0KQ2TKjrAJWzMa-KDHspRlOA4V286lOEvbuJRsrX' \
-    '-_sij_4BcKXV7A2AAKJdViLs4VA'
+    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVNl' \
+    'RSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViIjo' \
+    'iYXV0aDB8NWVkZTQ1YWIxNTJlODYwMDE5YTViMTQxIiwiYXVkIjoid29ya291dCIsImlhd' \
+    'CI6MTU5MTcxOTY5OCwiZXhwIjoxNTkxNzI2ODk3LCJhenAiOiJhYlF0cjlxeFJzdUl6MWd' \
+    'icjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlO' \
+    'mV4ZXJjaXNlIiwiZGVsZXRlOndvcmtvdXQiLCJnZXQ6ZXhlcmNpc2UiLCJnZXQ6d29ya29' \
+    '1dCIsInBhdGNoOmV4ZXJjaXNlIiwicGF0Y2g6d29ya291dCIsInBvc3Q6ZXhlcmNpc2UiL' \
+    'CJwb3N0OndvcmtvdXQiXX0.u6oodzb1EOUSLAKAbkR2ifisAXJZcQwYYMcBEKmvXVpxx-d' \
+    'TyNwpuxgwSZosPfcdzAlArD-vcI-7Wb22TRlcjLL6LfDYpwScm3ZC-jpDfaTOOiW9Jq19B' \
+    'W8i1U-EXYvJLyRxSZjLGo7dfVsumOwr843TKhqoDe88ijzKYF7_6iIP1kxZIGbuDvMzPc3' \
+    'frLjlR4m2DPJUcqfGtZXiaT1iKXx82svu2e7VkNgkfFUgWAwot61DzGXyoI3djvyhXqsDD' \
+    'rn6vxwHAuK_Ja3XQGlSyt1j1bbwHhZR4siqWgI_uauztGoPu7ePwyPbD00SZ47dLwYMi_j' \
+    'pByFV5_92FjiZnw'
 COACH_HEADER = {'Authorization': f'Bearer {COACH_TOKEN}'}
 
 
