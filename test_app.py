@@ -6,9 +6,33 @@ from flask_sqlalchemy import SQLAlchemy
 from app import create_app
 from models import setup_db, drop_db, Workout, Exercise, WorkoutExercise
 
-ATHLETE_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVNlRSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVkZTQ3MTQxNTJlODYwMDE5YTViM2NkIiwiYXVkIjoid29ya291dCIsImlhdCI6MTU5MTY1NDIwMCwiZXhwIjoxNTkxNjYxMzk5LCJhenAiOiJhYlF0cjlxeFJzdUl6MWdicjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmV4ZXJjaXNlIiwiZ2V0OndvcmtvdXQiLCJwYXRjaDp3b3Jrb3V0IiwicG9zdDp3b3Jrb3V0Il19.uhVKtMDCn3vvnkUVIWKQutTjdXB5TBXAGMMuM7wk-_zv4jmRYH2rRh4tbrlY0jPkGklmTfLapQBLYcHw1sagCQiMJXY5EQY72uLwToMI8qz-22jLeu1u8E3xtkLrcoX3PWmhIBncpgS5vwPhfyE7ntXlHbEEk6vUHoaVCbbfQkhx8hPV2j3I8LOMx27C3_2i8WWrEsQCe5d2xkfFdllbA3ctePuju1Pk7s81V6IMoldvVc4bUFOH2khBfkxQ0Ov0UbXBlXe1edsKrEzZ9yttDlJ5sxpuOyXygnYUvBGNk2jMyPBBhirVJnBW4KUEljHDQctk7cZRksqALgGWmZTdFA'
+ATHLETE_TOKEN = \
+    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVNl' \
+    'RSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViIjo' \
+    'iYXV0aDB8NWVkZTQ3MTQxNTJlODYwMDE5YTViM2NkIiwiYXVkIjoid29ya291dCIsImlhd' \
+    'CI6MTU5MTY1NDIwMCwiZXhwIjoxNTkxNjYxMzk5LCJhenAiOiJhYlF0cjlxeFJzdUl6MWd' \
+    'icjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmV4Z' \
+    'XJjaXNlIiwiZ2V0OndvcmtvdXQiLCJwYXRjaDp3b3Jrb3V0IiwicG9zdDp3b3Jrb3V0Il1' \
+    '9.uhVKtMDCn3vvnkUVIWKQutTjdXB5TBXAGMMuM7wk-_zv4jmRYH2rRh4tbrlY0jPkGklm' \
+    'TfLapQBLYcHw1sagCQiMJXY5EQY72uLwToMI8qz-22jLeu1u8E3xtkLrcoX3PWmhIBncpg' \
+    'S5vwPhfyE7ntXlHbEEk6vUHoaVCbbfQkhx8hPV2j3I8LOMx27C3_2i8WWrEsQCe5d2xkfF' \
+    'dllbA3ctePuju1Pk7s81V6IMoldvVc4bUFOH2khBfkxQ0Ov0UbXBlXe1edsKrEzZ9yttDl' \
+    'J5sxpuOyXygnYUvBGNk2jMyPBBhirVJnBW4KUEljHDQctk7cZRksqALgGWmZTdFA'
 ATHLETE_HEADER = {'Authorization': f'Bearer {ATHLETE_TOKEN}'}
-COACH_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVNlRSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVkZTQ1YWIxNTJlODYwMDE5YTViMTQxIiwiYXVkIjoid29ya291dCIsImlhdCI6MTU5MTY1NDI2NywiZXhwIjoxNTkxNjYxNDY2LCJhenAiOiJhYlF0cjlxeFJzdUl6MWdicjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmV4ZXJjaXNlIiwiZGVsZXRlOndvcmtvdXQiLCJnZXQ6ZXhlcmNpc2UiLCJnZXQ6d29ya291dCIsInBhdGNoOmV4ZXJjaXNlIiwicGF0Y2g6d29ya291dCIsInBvc3Q6ZXhlcmNpc2UiLCJwb3N0OndvcmtvdXQiXX0.rbFCbBqFpl3jPAnqwNmXYPR5cUSGIA1NZu8txnJ19mNA2mUl5Py14z-2N_sXS3IkrRT0HLofnDA1ndfG3-R87dM44pOZ6-Jwp9UiGKpo7CZu5ZylykaSAjq8nf2jpKyEO8hmsSnAHi24CuVGNVcipk5N6QBa9v18hQe5xJ7dBvrkbT1xgx3pso0nLmiz9lDlCSlFnJ7isMbLdWaieQiyYM7Z8nAIjYT4f7ckR2OAEBAg9acjFN_H1uIuha2Tdd0uVt1Ed6vMcixEkJN73sh0KQ2TKjrAJWzMa-KDHspRlOA4V286lOEvbuJRsrX-_sij_4BcKXV7A2AAKJdViLs4VA'
+COACH_TOKEN = \
+    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkFKOW9HX3R5eHlHcG1Ub1ZVN' \
+    'lRSTiJ9.eyJpc3MiOiJodHRwczovL2Rldi1sNDUyOXU3Mi5hdXRoMC5jb20vIiwic3ViI' \
+    'joiYXV0aDB8NWVkZTQ1YWIxNTJlODYwMDE5YTViMTQxIiwiYXVkIjoid29ya291dCIsIm' \
+    'lhdCI6MTU5MTY1NDI2NywiZXhwIjoxNTkxNjYxNDY2LCJhenAiOiJhYlF0cjlxeFJzdUl' \
+    '6MWdicjlHZlhFUENIYmNnS29GbSIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZGVs' \
+    'ZXRlOmV4ZXJjaXNlIiwiZGVsZXRlOndvcmtvdXQiLCJnZXQ6ZXhlcmNpc2UiLCJnZXQ6d' \
+    '29ya291dCIsInBhdGNoOmV4ZXJjaXNlIiwicGF0Y2g6d29ya291dCIsInBvc3Q6ZXhlcm' \
+    'Npc2UiLCJwb3N0OndvcmtvdXQiXX0.rbFCbBqFpl3jPAnqwNmXYPR5cUSGIA1NZu8txnJ' \
+    '19mNA2mUl5Py14z-2N_sXS3IkrRT0HLofnDA1ndfG3-R87dM44pOZ6-Jwp9UiGKpo7CZu' \
+    '5ZylykaSAjq8nf2jpKyEO8hmsSnAHi24CuVGNVcipk5N6QBa9v18hQe5xJ7dBvrkbT1xg' \
+    'x3pso0nLmiz9lDlCSlFnJ7isMbLdWaieQiyYM7Z8nAIjYT4f7ckR2OAEBAg9acjFN_H1u' \
+    'Iuha2Tdd0uVt1Ed6vMcixEkJN73sh0KQ2TKjrAJWzMa-KDHspRlOA4V286lOEvbuJRsrX' \
+    '-_sij_4BcKXV7A2AAKJdViLs4VA'
 COACH_HEADER = {'Authorization': f'Bearer {COACH_TOKEN}'}
 
 
@@ -128,7 +152,8 @@ class WorkoutTestCase(unittest.TestCase):
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_workouts = Workout.query.filter(Workout.name == 'new workout').count()
+            matching_workouts = \
+                Workout.query.filter(Workout.name == 'new workout').count()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
@@ -163,8 +188,11 @@ class WorkoutTestCase(unittest.TestCase):
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_workouts = Workout.query.filter(Workout.name == 'new workout').count()
-            matching_exercises = len(Workout.query.filter(Workout.name == 'new workout').first().exercises)
+            matching_workouts = \
+                Workout.query.filter(Workout.name == 'new workout').count()
+            matching_exercises = \
+                len(Workout.query.filter(
+                    Workout.name == 'new workout').first().exercises)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
@@ -228,7 +256,8 @@ class WorkoutTestCase(unittest.TestCase):
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_workouts = Workout.query.filter(Workout.name == 'new workout').count()
+            matching_workouts = \
+                Workout.query.filter(Workout.name == 'new workout').count()
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
@@ -250,7 +279,9 @@ class WorkoutTestCase(unittest.TestCase):
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_exercises = Exercise.query.filter(Exercise.name == 'bodyweight squat').count()
+            matching_exercises = \
+                Exercise.query.filter(
+                    Exercise.name == 'bodyweight squat').count()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
@@ -298,7 +329,9 @@ class WorkoutTestCase(unittest.TestCase):
 
         with self.app.app_context():
             matching_workout = Workout.query.get(1)
-            matching_mappings = WorkoutExercise.query.filter(WorkoutExercise.workout_id == 1).count()
+            matching_mappings = \
+                WorkoutExercise.query.filter(
+                    WorkoutExercise.workout_id == 1).count()
             matching_exercise = Exercise.query.get(1)
 
         self.assertEqual(response.status_code, 200)
@@ -306,7 +339,8 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['workout_id'], 1)
         self.assertIsNone(matching_workout)
         self.assertEqual(matching_mappings, 0)
-        self.assertIsNotNone(matching_exercise)  # do not want exercise itself deleted
+        self.assertIsNotNone(matching_exercise)
+        # do not want exercise itself deleted
 
     def test_delete_workout_out_of_bounds(self):
         response = self.client().delete('/workouts/11', headers=COACH_HEADER)
@@ -371,7 +405,9 @@ class WorkoutTestCase(unittest.TestCase):
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_workout = Workout.query.filter(Workout.name == 'updated workout').first()
+            matching_workout = \
+                Workout.query.filter(
+                    Workout.name == 'updated workout').first()
             matching_exercises = len(matching_workout.exercises)
 
         self.assertEqual(response.status_code, 200)
@@ -439,8 +475,10 @@ class WorkoutTestCase(unittest.TestCase):
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_workout = Workout.query.filter(Workout.name == 'updated workout')
-            old_workout = Workout.query.filter(Workout.name == 'test workout')
+            matching_workout = \
+                Workout.query.filter(Workout.name == 'updated workout')
+            old_workout = \
+                Workout.query.filter(Workout.name == 'test workout')
             previous_mapping = WorkoutExercise.query.first()
             previous_mapping_weight = previous_mapping.weight
 
@@ -468,7 +506,9 @@ class WorkoutTestCase(unittest.TestCase):
         data = json.loads(response.data)
 
         with self.app.app_context():
-            matching_exercises = Exercise.query.filter(Exercise.name == 'barbell front squat').count()
+            matching_exercises = \
+                Exercise.query.filter(
+                    Exercise.name == 'barbell front squat').count()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
@@ -519,7 +559,8 @@ class WorkoutTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
 
     def test_delete_workout_permission_error(self):
-        response = self.client().delete('/workouts/1', headers=ATHLETE_HEADER)
+        response = \
+            self.client().delete('/workouts/1', headers=ATHLETE_HEADER)
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 403)

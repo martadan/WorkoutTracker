@@ -84,7 +84,8 @@ def create_app(test_config=None):
             try:
                 workout.insert_without_commit()
                 for exercise in exercises:
-                    e_id = Exercise.query.filter(Exercise.name == exercise['name']).first().id
+                    e_id = Exercise.query.filter(
+                        Exercise.name == exercise['name']).first().id
                     workout_exercise = WorkoutExercise(
                         workout_id=workout.id,
                         exercise_id=e_id,
@@ -133,7 +134,8 @@ def create_app(test_config=None):
 
         try:
             for exercise in exercises:
-                e_id = Exercise.query.filter(Exercise.name == exercise['name']).first().id
+                e_id = Exercise.query.filter(
+                    Exercise.name == exercise['name']).first().id
                 workout_exercise = WorkoutExercise(
                     workout_id=workout.id,
                     exercise_id=e_id,
@@ -213,7 +215,8 @@ def create_app(test_config=None):
                 link=link
             )
 
-            # could check whether we expect this to fail based on inputs, and abort(500) otherwise
+            # could check whether we expect this to fail
+            # based on inputs, and abort(500) otherwise
             exercise.insert()
         except Exception:
             abort(400)
@@ -257,7 +260,8 @@ def create_app(test_config=None):
         exercise = Exercise.query.get(exercise_id)
         if exercise is None:
             abort(404)
-        elif WorkoutExercise.query.filter(WorkoutExercise.exercise_id == exercise_id).count() > 0:
+        elif WorkoutExercise.query.filter(
+                WorkoutExercise.exercise_id == exercise_id).count() > 0:
             abort(400)
         else:
             try:

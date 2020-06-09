@@ -1,7 +1,8 @@
 import os
 import json
 import datetime as dt
-from sqlalchemy import Column, ForeignKey, String, Integer, Numeric, DateTime, Boolean, Date, Time, create_engine
+from sqlalchemy import Column, ForeignKey, String, \
+    Integer, Numeric, DateTime, Boolean, Date, Time, create_engine
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 
@@ -71,9 +72,11 @@ class Exercise(db.Model):
     name = Column(String(), nullable=False, unique=True)
     equipment = Column(String(), nullable=False)
     target = Column(String(), nullable=False)  # reps or time
-    link = Column(String(), nullable=True)  # link to exercise video/explanation
-    # double_weight = Column(Boolean(), nullable=False)  # double the weight in total volume calculation (using two dbs)
-    # add_bodyweight = Column(Boolean(), nullable=False)  # add bodyweight to total volume calculation
+    link = Column(String(), nullable=True)  # link to video/explanation
+    # double_weight = Column(Boolean(), nullable=False)
+    #   double the weight in total volume calculation (using two dbs)
+    # add_bodyweight = Column(Boolean(), nullable=False)
+    #   add bodyweight to total volume calculation
 
     def __init__(self, name, equipment, target, link):
         self.name = name
@@ -142,7 +145,8 @@ class WorkoutExercise(db.Model):
             'link': self.exercise.link,
             'sets': self.sets,
             'reps': self.reps,
-            'weight': str(self.weight)  # Decimal() is not json serializable apparently...
+            'weight': str(self.weight)
+            # Decimal() is not json serializable apparently...
         }
 
     def insert(self):

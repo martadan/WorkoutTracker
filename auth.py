@@ -1,17 +1,19 @@
+import os
 import json
 from flask import request
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 
-DOMAIN = 'dev-l4529u72.auth0.com'
-ALGORITHMS = ['RS256']
-AUDIENCE = 'workout'
+DOMAIN = os.environ['AUTH0_DOMAIN']
+ALGORITHMS = [os.environ['ALGORITHMS']]
+AUDIENCE = os.environ['API_AUDIENCE']
 
 
 class CustomAuthError(Exception):
     """
-    Custom Exception class to communicate details of authorization error back to app.py
+    Custom Exception class to communicate details
+    of authorization error back to app.py
     """
     def __init__(self, error, status_code):
         self.error = error
@@ -120,7 +122,8 @@ def verify_decode_jwt(token):
         except jwt.JWTClaimsError:
             raise CustomAuthError({
                 'code': 'invalid_claims',
-                'description': 'Incorrect claims. Please, check the audience and issuer.'
+                'description':
+                    'Incorrect claims. Please, check the audience and issuer.'
             }, 401)
 
         except Exception:
@@ -137,7 +140,8 @@ def verify_decode_jwt(token):
 
 def requires_auth(permission=''):
     """
-    Wrapper function for authenticating request (check token, check for permissions)
+    Wrapper function for authenticating request
+      (check token, check for permissions)
     No payload in f() return - current functions don't take a payload
     """
     def requires_auth_decorator(f):
